@@ -1,0 +1,124 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vue JS</title>
+</head>
+<style>
+    .red {
+        border: 2px solid red;
+    }
+
+    .green {
+        border: 2px solid green;
+    }
+</style>
+
+<body>
+    <div id="root">
+        <h1> Vue JS Basics </h1>
+        <h1>Data Binding</h1>
+        <h2>{{greet}}!</h2>
+        <input v-model="greet" />
+        <br />
+        <h1>Conditional Rendering</h1>
+        <div v-if="count == 1">
+            Value is 1
+        </div>
+        <div v-else-if="count == 2">
+            Value is 2
+        </div>
+        <div v-else>
+            Vlaue is 0
+        </div>
+        <div v-show="count === 1">
+            Show value is 1
+        </div>
+        <!-- <div v-hide="count == 2">
+            Hidden Value
+        </div> -->
+        <br>
+        <h1> Event handling and filters </h1>
+        Sign Up
+        <br>
+        <input v-model="email" :class="[email.length < 2 ?  'red': 'green']" />
+        <br>
+        <button onclick="alert('Signed up')" :disabled="email.length < 2">Submit</button>
+        <br>
+        <h1>List Rendering</h1>
+        {{kittifyName}}
+        <input type="text" v-model="newCat" @keyup.enter="addKitty" />
+        <button @click.prevent="addKitty">+Add</button>
+        <ul>
+            <li v-for="cat in cats">
+                {{cat.name | capitalize | kittify}}
+            </li>
+        </ul>
+        <br>
+        <cat-list :cats="cats"></cat-list>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+    <script>
+        Vue.component('cat-list', {
+            props: ['cats'],
+            template: `
+                <ul>
+                    <li v-for="cat in cats">{{cat.name}}</li>
+                </ul>
+            `
+        })
+        var app = new Vue({
+            el: '#root',
+            component: ['cat-list'],
+            data: {
+                greet: 'Hello Vue',
+                count: 1,
+                email: '',
+                cats: [{ name: 'kitkat' }, { name: 'fish' }, { name: 'henry' }],
+                newCat: '',
+            },
+            created: function () {
+                console.log('created');
+            },
+            mounted: function () {
+                console.log('mounted');
+            },
+            updated: function () {
+                console.log('updated');
+            },
+            destroyed: function () {
+                console.log('destroyed');
+            },
+            methods: {
+                addKitty: function () {
+                    this.cats.push({ name: this.newCat })
+                    this.newCat = '';
+                }
+            },
+            filters: {
+                capitalize: function (value) {
+                    return value.toUpperCase();
+                },
+                kittify: function (value) {
+                    return value + 'y';
+                }
+            },
+            computed: {
+                kittifyName: function () {
+                    if (this.newCat.length > 1) {
+                        return this.newCat + 'y';
+                    }
+                }
+            }
+        })
+        setTimeout(function () {
+            app.$destroy();
+        }, 5000)
+
+    </script>
+</body>
+
+</html>
